@@ -1,10 +1,11 @@
 #include <stdio.h>
+#include <time.h>
 #define N 624
 #define M 397
 #define MATRIX_A 0x9908b0dfUL
 #define UPPER_MASK 0x80000000UL
 #define LOWER_MASK 0x7fffffffUL
-#define D 60
+#define D 15
 #define X 10
 #define Y 30
 static unsigned long mt[N];
@@ -54,31 +55,19 @@ double genrand_real2(void){
     return genrand_int32()*(1.0/4294967296.0); 
 }
 int main(){
-  int n,i,j,count,num[D],param,win;
+  int i,num[D],a[D],param;
   unsigned long int seed;
   init_genrand(seed=(unsigned long)time(NULL));
-  for(i=0;i<100000000;i++){
-    for(n=10;n>6;n--){
-      for(j=0;j<D;j++)
-        num[j]=0;
-      count=0;
-      for(j=0;j<n;j++){
-        do{
-          param=(int)(genrand_real2()*D);
-        }while(num[param]!=0);
-        if(param<X)
-          count+=1;
-        else if(param<Y)
-          count+=10;
-        else
-          count+=100;
-        num[param]=1;
-      }
-      if(count%10>0 && (count/10)%10>1 && count/100>3){
-        win++;
-        break;
-      }
-    }
+  for(i=0;i<D;i++)
+    num[i]=0;
+  for(i=0;i<D;i++){
+    do{
+      param=(int)(genrand_real2()*D);
+    }while(num[param]!=0);
+    a[i]=param;
+    num[param]=1;
   }
-  printf("%lf\n",(double)win/i*100);
+  for(i=0;i<D;i++)
+    printf("%d ",a[i]);
+  printf("\nseed is %lu\n",seed);
 }
